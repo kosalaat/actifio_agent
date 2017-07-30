@@ -1,0 +1,12 @@
+---
+# tasks file for actifio_agent
+
+- include: agent_redhat.yml
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Red Hat Enterprise Linux" or ansible_distribution == "RedHat"
+
+- include: discover_vm.yml
+  when: discover_as_vm
+
+- include: add_host_iscsi.yml
+  when: not discover_as_vm 
+

@@ -1,0 +1,32 @@
+---
+# tasks file for actifio_agent
+
+- name: install iscsi-tools
+  yum:
+    name: iscsi-initiator-utils
+    state: present
+
+- name: install vmtools for rh7 based
+  yum: name=open-vm-tools state=present
+  when: ansible_distribution_major_version == "7"
+
+- name: install vmtools for rh6 based
+  block:
+    - name: copy the vmware.repo from template
+      template: src=vmware.repo.j2 dst=/etc/yum.repos.d/vmware.repo
+  
+    - name: install the vmtools
+      yum: name=vmware-tools-esx-nox state=present
+  when: ansible_distribution_major_version == "6" 
+
+- name: install the udsagent
+  yum: 
+    name: "https://{{ act_appliance }}/connector-Linux-latestversion.rpm"
+    validate_certs: no
+    state: present
+
+- name: open firewall ports for the connector
+  firewalld: port=5106/tcp state=enabled permanent=yes
+
+- name: restart firewall
+  service: name=firewalld state=restarted

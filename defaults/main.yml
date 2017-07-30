@@ -1,0 +1,17 @@
+---
+# defaults file for actifio_agent
+
+act_appliance: 192.168.57.128
+
+act_user: admin
+
+act_pass: password
+
+act_vendorkey: ''
+
+discover_as_vm: no
+
+act_agent_type: '' 
+
+
+
