@@ -6,6 +6,11 @@
     name: iscsi-initiator-utils
     state: present
 
+- name: install patch (needed for linux cbt) 
+  yum: 
+    name: patch
+    state: present
+
 - name: install vmtools for rh7 based
   yum: name=open-vm-tools state=present
   when: ansible_distribution_major_version == "7"
@@ -13,7 +18,7 @@
 - name: install vmtools for rh6 based
   block:
     - name: copy the vmware.repo from template
-      template: src=vmware.repo.j2 dst=/etc/yum.repos.d/vmware.repo
+      template: src=vmware.repo.j2 dest=/etc/yum.repos.d/vmware.repo
   
     - name: install the vmtools
       yum: name=vmware-tools-esx-nox state=present
@@ -25,8 +30,23 @@
     validate_certs: no
     state: present
 
-- name: open firewall ports for the connector
-  firewalld: port=5106/tcp state=enabled permanent=yes
+- name: firewalld operations
+  block:
+    - name: open firewall ports for the connector
+      firewalld: port=5106/tcp state=enabled permanent=yes
 
-- name: restart firewall
-  service: name=firewalld state=restarted
+    - name: restart firewall
+      service: name=firewalld state=restarted
+  when: ansible_distribution_major_version == "7"
+
+- name: iptable entries for redhat 6
+  block:
+    - name: allow connector port access
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 5106
+        jump: ACCEPT
+    - name: save iptables settings
+      command: "service iptables save"
+  when: ansible_distribution_major_version == "6"
