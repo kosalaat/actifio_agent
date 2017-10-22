@@ -32,20 +32,27 @@
 
 - name: firewalld operations
   block:
-    - name: open firewall ports for the connector
+    - name: open firewall ports (5106/tcp) for the connector
       firewalld: port=5106/tcp state=enabled permanent=yes
-
+    - name: open firewall ports (56789/tcp) for the connector
+      firewalld: port=56789/tcp state=enabled permanent=yes
     - name: restart firewall
       service: name=firewalld state=restarted
   when: ansible_distribution_major_version == "7"
 
 - name: iptable entries for redhat 6
   block:
-    - name: allow connector port access
+    - name: allow connector port (5106/tcp) access
       iptables:
         chain: INPUT
         protocol: tcp
         destination_port: 5106
+        jump: ACCEPT
+    - name: allow connector port (56789/tcp) access
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 56789
         jump: ACCEPT
     - name: save iptables settings
       command: "service iptables save"
