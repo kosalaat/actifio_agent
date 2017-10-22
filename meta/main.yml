@@ -1,6 +1,6 @@
 galaxy_info:
   author: Kosala Atapattu
-  description: 
+  description: Ansible playbook to install Actifio connector for RedHat
   company: Actifio
 
   # If the issue tracker for your role is not on github, uncomment the
