@@ -1,4 +1,4 @@
-***NOTE: Development moved to github.com/actifio/ansible_connector_install ***
+*** NOTE: Development for this project moved to github.com/actifio/ansible_connector_install ***
 
 
 Role Name
